@@ -1,0 +1,32 @@
+name: Build LoFi Vinyl
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:   # permet de lancer le build à la main depuis l'onglet Actions
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer (télécharge JUCE)
+        run: cmake -B build
+
+      - name: Compiler en Release
+        run: cmake --build build --config Release --parallel
+
+      - name: Publier le VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: LoFiVinyl-VST3-Windows
+          path: build/LoFiVinyl_artefacts/Release/VST3/
+
+      - name: Publier le Standalone
+        uses: actions/upload-artifact@v4
+        with:
+          name: LoFiVinyl-Standalone-Windows
+          path: build/LoFiVinyl_artefacts/Release/Standalone/
